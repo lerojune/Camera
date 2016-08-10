@@ -88,7 +88,7 @@ public class Scanner implements IScan{
     }
 
     @Override
-    public Map<String, List<PhotoFile>> getFolders() {
+    public  synchronized Map<String, List<PhotoFile>> getFolders() {
         if (folders.size() > 0 && scaned)
             return folders;
 
@@ -149,7 +149,7 @@ public class Scanner implements IScan{
         return folders.get(folder);
     }
 
-    private String getThumbnail(int id, String path) {
+    private synchronized String getThumbnail(int id, String path) {
         //获取大图的缩略图
         Cursor cursor = context.getContentResolver().query(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI,
                 THUMBNAIL_STORE_IMAGE,

@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!data.hasExtra("data"))
                     return;
                 Bitmap bmp = data.getParcelableExtra("data");
-      //          saveImage(bmp);
+//                saveImage(bmp);
 //                setResult(RESULT_OK,new Intent().putExtra("result",cameraFile));
 //                finish();
                 break;
