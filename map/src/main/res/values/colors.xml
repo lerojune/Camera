@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <!--common color-->
+    <color name="com_red">#f26a6c</color>
+    <color name="com_oragne">#ff5a00</color>
+    <color name="com_gray">#d2d2d2</color>
+    <color name="com_light">#f0f0f0</color>
+    <color name="com_white">#ffffff</color>
+    <color name="com_black">#5a5a5a</color>
+    <color name="com_ligth_black">#8c8c8c</color>
+
+    <color name="com_btn_white">#ffffff</color>
+    <color name="com_btn_white_press">#dcdcdc</color>
+    <color name="com_btn_orange">#ff5a00</color>
+    <color name="com_btn_orange_press">#eb3c00</color>
+    <color name="com_btn_red">#f26a6c</color>
+    <color name="com_btn_red_press">#d85355</color>
+</resources>
