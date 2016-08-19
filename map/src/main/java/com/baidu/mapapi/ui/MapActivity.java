@@ -1,11 +1,15 @@
 package com.baidu.mapapi.ui;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.yunrich.map.R;
+import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.InfoWindow;
@@ -47,6 +52,7 @@ import com.baidu.mapapi.search.route.TransitRoutePlanOption;
 import com.baidu.mapapi.search.route.TransitRouteResult;
 import com.baidu.mapapi.search.route.WalkingRoutePlanOption;
 import com.baidu.mapapi.search.route.WalkingRouteResult;
+import com.baidu.mapapi.so.SOLoader;
 import com.baidu.mapapi.utils.OpenClientUtil;
 import com.baidu.mapapi.utils.route.Plan;
 import com.baidu.mapapi.utils.route.RouteParaOption;
@@ -90,6 +96,9 @@ public class MapActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SOLoader.initNativeDirectory(getApplication());
+        SDKInitializer.initialize(getApplication());
+
         setContentView(R.layout.activity_map);
         red = getResources().getColor(R.color.com_red);
         black = getResources().getColor(R.color.com_black);
@@ -127,8 +136,18 @@ public class MapActivity extends AppCompatActivity {
         locHelper.init(this, iLoc);
         geoHelper = new GeoHelper();
         geoHelper.init(this, iGeo);
+        Plan.setSupportWebRoute(false);
+        searchLine();
+    }
 
-//        searchLine();
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 1){
+            if (permissions != null && permissions.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                searchLine();
+            }
+        }
     }
 
     @Override
@@ -150,9 +169,16 @@ public class MapActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},1);
+            }
+        }
+
         mMapView.onResume();
         super.onResume();
-        searchLine();
+//        searchLine();
+        showPopu();
     }
 
 
@@ -346,11 +372,11 @@ public class MapActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         mMapView.setVisibility(View.INVISIBLE);
 
-        if (llFrom == null) {
+        if (llFrom == null || llFrom.latitude == 4.9E-324) {
             locHelper.start();
             return;
         }
-        if (llTo == null) {
+        if (llTo == null || llTo.latitude == 4.9E-324) {
             geoHelper.find(city, detail);
             return;
         }
@@ -485,6 +511,7 @@ public class MapActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                showPopu();
             }
         });
         builder.create().show();
@@ -495,6 +522,8 @@ public class MapActivity extends AppCompatActivity {
      * 自定义overlay
      */
     private void showPopu() {
+        if (llTo == null || llFrom == null || llFrom.latitude == 4.9E-324)
+            return;
         InfoWindow mInfoWindow = new InfoWindow(BitmapDescriptorFactory.fromView(rootView), llTo, -47, onInfoWindowClickListener);
         mBaidumap.showInfoWindow(mInfoWindow);
     }

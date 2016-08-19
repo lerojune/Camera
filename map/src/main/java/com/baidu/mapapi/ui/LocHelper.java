@@ -84,7 +84,7 @@ public class LocHelper {
      * */
     public void start(){
         if (mLocClient != null){
-            isFirstLoc = false;
+            isFirstLoc = true;
             return;
         }
         // 定位初始化
